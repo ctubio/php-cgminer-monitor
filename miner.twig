@@ -1,0 +1,180 @@
+      <div class="panel panel-info">
+        <div class="panel-heading"><h3 class="panel-title">System overview - {{ stats.STATUS.0.Description }}</h3></div>
+        <div class="panel-body">
+
+          <h1>{{ attribute(summary.SUMMARY.0, 'GHS 5s') }} GHs / {{ attribute(summary.SUMMARY.0, 'GHS av') }} GHs <small>5 sec / average</small></h1>
+
+
+          <h3>Best Share <span class="label label-primary">{{ summary.SUMMARY.0.best_share }}</span> <small>Current Difficutly <span class="label label-primary">{{ summary.SUMMARY.0.max_diff }}</small></spanl></h3>
+          <div class="progress progress-striped">
+          {% if summary.SUMMARY.0.share_diff > 50 %}
+            <div class="progress-bar progress-bar-danger" role="progressbar" aria-valuenow="{{ summary.SUMMARY.0.share_diff }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ summary.SUMMARY.0.share_diff }}%">
+          {% elseif summary.SUMMARY.0.share_diff > 40 %}
+            <div class="progress-bar progress-bar-warning" role="progressbar" aria-valuenow="{{ summary.SUMMARY.0.share_diff }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ summary.SUMMARY.0.share_diff }}%">
+          {% else %}
+            <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="{{ summary.SUMMARY.0.share_diff }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ summary.SUMMARY.0.share_diff }}%">
+          {% endif %}
+            </div>
+          </div>
+          <h3>Average temperature <span class="label label-primary">{{ stats.STATS.1.temp_avg }}</span></h3>
+          <div class="progress progress-striped">
+          {% if stats.STATS.1.temp_avg > 50 %}
+            <div class="progress-bar progress-bar-danger" role="progressbar" aria-valuenow="{{ stats.STATS.1.temp_avg }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ stats.STATS.1.temp_avg }}%">
+          {% elseif stats.STATS.1.temp_avg > 40 %}
+            <div class="progress-bar progress-bar-warning" role="progressbar" aria-valuenow="{{ stats.STATS.1.temp_avg }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ stats.STATS.1.temp_avg }}%">
+          {% else %}
+            <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="{{ stats.STATS.1.temp_avg }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ stats.STATS.1.temp_avg }}%">
+          {% endif %}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel panel-info">
+        <div class="panel-heading"><h3 class="panel-title">Pools</h3></div>
+        <div class="panel-body">
+          <table class="table table-striped table-condensed">
+            <thead>
+              <tr>
+                <th> </th>
+                <th>URL</th>
+                <th>User</th>
+                <th>Difficulty</th>
+                <th>Status</th>
+                <th>Getworks</th>
+                <th>Last share</th>
+                <th>Accepted</th>
+                <th>Rejected</th>
+                <th>Stale</th>
+              </tr>
+            </thead>
+            <tbody>
+            {% for pool in pools %}
+              <tr>
+                <td>
+                  <form role="form" class="pull-left" action="index.php" method="POST">
+                    <input type="hidden" name="token" value="{{ token }}">
+                    <input type="hidden" name="cmd" value="switchpool">
+                    <input type="hidden" name="miner" value="{{ ID }}">
+                    <input type="hidden" name="pool" value="{{ pool.POOL }}">
+                    <button type="submit" class="btn btn-primary btn-xs"><span class="glyphicon glyphicon-cloud-upload" aria-hidden="true"></span></button>
+                  </form>
+                </td>
+                <td>{{ pool.URL }}</td>
+                <td>{{ pool.User }}</td>
+                <td>{{ pool.Diff }}</td>
+                <td>{{ pool.Status }}</td>
+                <td>{{ pool.Getworks }}</td>
+                <th>{{ attribute(pool, 'Last Share Time') }}</th>
+                <td>{{ pool.Accepted }}</td>
+                <td>{{ attribute(pool, 'Pool Rejected%') }}%</td>
+                <td>{{ attribute(pool, 'Pool Stale%') }}%</td>
+                <td>
+                  <form role="form" class="pull-left" action="index.php" method="POST">
+                    <input type="hidden" name="token" value="{{ token }}">
+                    <input type="hidden" name="cmd" value="enablepool">
+                    <input type="hidden" name="miner" value="{{ ID }}">
+                    <input type="hidden" name="pool" value="{{ pool.POOL }}">
+                    <button type="submit" class="btn btn-success btn-xs"><span class="glyphicon glyphicon-play" aria-hidden="true"></span></button>
+                  </form>
+
+                  <form role="form" class="pull-left" action="index.php" method="POST">
+                    <input type="hidden" name="token" value="{{ token }}">
+                    <input type="hidden" name="cmd" value="disablepool">
+                    <input type="hidden" name="miner" value="{{ ID }}">
+                    <input type="hidden" name="pool" value="{{ pool.POOL }}">
+                    <button type="submit" class="btn btn-warning btn-xs"><span class="glyphicon glyphicon glyphicon-pause" aria-hidden="true"></span></button>
+                  </form>
+
+                  <form role="form" class="pull-left" action="index.php" method="POST">
+                    <input type="hidden" name="token" value="{{ token }}">
+                    <input type="hidden" name="cmd" value="removepool">
+                    <input type="hidden" name="miner" value="{{ ID }}">
+                    <input type="hidden" name="pool" value="{{ pool.POOL }}">
+                    <button type="submit" class="btn btn-danger btn-xs"><span class="glyphicon glyphicon glyphicon-trash" aria-hidden="true"></span></button>
+                  </form>
+                </td>
+              </tr>
+            {% endfor %}
+            </tbody>
+          </table>
+          <form class="form-inline" action="index.php" method="POST">
+  <div class="form-group form-group-sm">
+    <label class="sr-only">URL</label>
+    <input type="text" name="url" class="form-control" placeholder="URL">
+  </div>
+  <div class="form-group form-group-sm">
+    <label class="sr-only">Username</label>
+    <input type="text" name="username" class="form-control" placeholder="Username">
+  </div>
+  <div class="form-group form-group-sm">
+    <label class="sr-only">Password</label>
+    <input type="text"name="password"  class="form-control" placeholder="Password">
+  </div>
+  <button type="submit" class="btn btn-success btn-sm">Add pool</button>
+  <input type="hidden" name="token" value="{{ token }}">
+  <input type="hidden" name="miner" value="{{ ID }}">
+  <input type="hidden" name="cmd" value="addpool">
+</form>
+        </div>
+      </div>
+
+      <div class="panel panel-info">
+        <div class="panel-heading"><h3 class="panel-title">Hardware</h3></div>
+        <div class="panel-body">
+          <div class="row">
+            <div class="col-md-4">
+              <ul class="list-group">
+                <li class="list-group-item">
+                  <span class="badge">{{ attribute(stats.STATS.1, 'Device Hardware%') }}%</span>
+                  Hardware errors
+                </li>
+                <li class="list-group-item">
+                  <span class="badge">{{ stats.STATS.1.asic_count }}</span>
+                  ASIC Count
+                </li>
+                <li class="list-group-item">
+                  <span class="badge">{{ stats.STATS.1.frequency }}</span>
+                  Frequency
+                </li>
+                <li class="list-group-item">
+                  <span class="badge">{{ stats.STATS.1.voltage }}</span>
+                  Voltage
+                </li>
+              </ul>
+            </div>
+
+            <div class="col-md-4">
+              <ul class="list-group">
+              {% for i in range(1, stats.STATS.1.fan_num) %}
+                <li class="list-group-item">
+                  <span class="badge">{{ attribute(stats.STATS.1, 'fan' ~ i) }}</span>
+                  Fan {{ i }}
+                </li>
+              {% endfor %}
+              </ul>
+            </div>
+
+            <div class="col-md-4">
+              <ul class="list-group">
+              {% for i in range(1, stats.STATS.1.temp_num) %}
+                <li class="list-group-item">
+                  <span class="badge">{{ attribute(stats.STATS.1, 'temp' ~ i) }}</span>
+                  Temp {{ i }}
+                </li>
+              {% endfor %}
+
+                <li class="list-group-item">
+                  <span class="badge">{{ attribute(stats.STATS.1, 'temp_avg') }}</span>
+                  Average temperature
+                </li>
+                <li class="list-group-item">
+                  <span class="badge">{{ attribute(stats.STATS.1, 'temp_max') }}</span>
+                  Max temperature
+                </li>
+              </ul>
+            </div>
+
+          </div>
+        </div>
+      </div>
