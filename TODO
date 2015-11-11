@@ -1,6 +1,8 @@
 add titles to icons
 add auto refresh
+add pool switch by timeout
 keep current tab after manual refresh
+mark active pool
 show/change pools strategy
 collapsible add pool form
 add hashrate charts
