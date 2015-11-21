@@ -1,0 +1,9 @@
+{% if msgs|length > 0 %}
+<script type="text/javascript">$(document).ready(function() { setTimeout(function(){location.href=location.protocol+'//'+location.host{% if tab %}+'?tab={{tab}}'{% endif %};},7000);});</script>
+<div class="alert alert-dismissable alert-success">
+  <button type="button" class="close" data-dismiss="alert">×</button>
+  {% for msg in msgs %}
+  {{ msg }} <br>
+  {% endfor %}
+</div>
+{% endif %}

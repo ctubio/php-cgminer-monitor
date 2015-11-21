@@ -10,15 +10,6 @@
   <body>
     <br />
     <div class="container">
-      {% if msgs|length > 0 %}
-      <script type="text/javascript">setTimeout(function(){location.href=location.protocol+'//'+location.host;},7000);</script>
-      <div class="alert alert-dismissable alert-success">
-        <button type="button" class="close" data-dismiss="alert">×</button>
-        {% for msg in msgs %}
-        {{ msg }} <br>
-        {% endfor %}
-      </div>
-      {% endif %}
       <div role="tabpanel">
         <ul class="nav nav-tabs" role="tablist">
           {% for i in range(0, miners|length -1) %}
@@ -34,5 +25,21 @@
     </div>
     <script src="js/jquery.js"></script>
     <script src="js/bootstrap.min.js"></script>
+    <script type="text/javascript">
+    $(document).ready(function() {
+        $('form').submit(function(event) {
+          $.ajax({
+              type     : 'POST',
+              url      : '/index.php',
+              data     : $(this).serialize(),
+              encode   : true
+          }).done(function(data) {$('.container').prepend(data);});
+          event.preventDefault();
+        });
+        {% if tab > 0 %}
+          $('.nav li').eq({{tab}}).find('a').click();
+        {% endif %}
+    });
+  </script>
   </body>
 </html>

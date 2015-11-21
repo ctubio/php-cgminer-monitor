@@ -12,8 +12,8 @@ class Api {
     socket_set_option($socket, SOL_SOCKET, SO_SNDTIMEO, array('sec' => 10, 'usec' => 0));
     socket_set_option($socket, SOL_SOCKET, SO_RCVTIMEO, array('sec' => 10, 'usec' => 0));
 
-    $res = socket_connect($socket, $ip, $port);
-    if(socket_getpeername($socket, $ip)) {
+    $res = @socket_connect($socket, $ip, $port);
+    if(@socket_getpeername($socket, $ip)) {
       return $socket;
     } else {
       return false;
