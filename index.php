@@ -24,7 +24,6 @@ if(isset($_POST['token']) && $token = $core->validCsrf($_POST['token'])) {
       $result = $api->command($_POST['miner'], 'addpool', $poolData);
       break;
     case 'poolquota':
-      $result = $api->command($_POST['miner'], $_POST['quota']?'enablepool':'disablepool', $_POST['pool']);
       $poolData = $_POST['pool'].','.$_POST['quota'];
       $result = $api->command($_POST['miner'], 'poolquota', $poolData);
       break;
@@ -56,10 +55,6 @@ foreach($miners as $minerId => $minerData) {
     foreach($pools['POOLS'] as $k=>$v){
       $pools['POOLS'][$k]['isWorking'] = $config['CONFIG'][0]['Strategy']=='Failover'
         ? !$pools['POOLS'][$k]['Priority'] : $pools['POOLS'][$k]['Status']=='Alive';
-      if ($pools['POOLS'][$k]['isWorking'] and !$pools['POOLS'][$k]['Quota'] and $config['CONFIG'][0]['Strategy']!='Failover') {
-        $result = $api->command($minerId, 'disablepool', $pools['POOLS'][$k]['POOL']);
-        $pools['POOLS'][$k]['isWorking'] = false;
-      }
     }
     $coin = $api->command($minerId, 'coin');
     $summary['SUMMARY'][0]['max_diff'] = bcadd($coin['COIN'][0]["Network Difficulty"],0,0);
