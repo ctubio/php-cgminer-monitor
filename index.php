@@ -24,6 +24,7 @@ if(isset($_POST['token']) && $token = $core->validCsrf($_POST['token'])) {
       $result = $api->command($_POST['miner'], 'addpool', $poolData);
       break;
     case 'poolquota':
+      $result = $api->command($_POST['miner'], $_POST['quota']?'enablepool':'disablepool', $_POST['pool']);
       $poolData = $_POST['pool'].','.$_POST['quota'];
       $result = $api->command($_POST['miner'], 'poolquota', $poolData);
       break;
@@ -46,7 +47,7 @@ $tab = 0;
 foreach($miners as $minerId => $minerData) {
   $summary = $api->command($minerId, 'summary');
   if($summary === false) {
-    $minerHtml[$minerId] = 'Unable to connect to '. $miners[$minerId];
+    $minerHtml[$minerId] = '<p style="margin:10px;">Unable to connect to '. $miners[$minerId].'</p>';
     $messages[] = $minerHtml[$minerId];
   } else {
     $config = $api->command($minerId, 'config');
