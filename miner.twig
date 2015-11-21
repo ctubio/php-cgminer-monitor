@@ -136,7 +136,7 @@
               <ul class="list-group">
                 <li class="list-group-item">
                   <span class="badge">{{ attribute(stats.STATS.1, 'Device Hardware%') }}%</span>
-                  Hardware errors
+                  Hardware Errors
                 </li>
                 <li class="list-group-item">
                   <span class="badge">{{ stats.STATS.1.asic_count }}</span>
@@ -156,31 +156,32 @@
             <div class="col-md-4">
               <ul class="list-group">
               {% for i in range(1, stats.STATS.1.fan_num) %}
+                {% if attribute(stats.STATS.1, 'fan' ~ i) != 0 %}
                 <li class="list-group-item">
                   <span class="badge">{{ attribute(stats.STATS.1, 'fan' ~ i) }}</span>
                   Fan {{ i }}
                 </li>
+                {% endif %}
               {% endfor %}
               </ul>
             </div>
 
             <div class="col-md-4">
               <ul class="list-group">
+                <!--li class="list-group-item">
+                  <span class="badge">{{ attribute(stats.STATS.1, 'temp_avg') }}</span>
+                  Average temperature
+                </li-->
+                <li class="list-group-item">
+                  <span class="badge">{{ attribute(stats.STATS.1, 'temp_max') }}</span>
+                  Max Temp
+                </li>
               {% for i in range(1, stats.STATS.1.temp_num) %}
                 <li class="list-group-item">
                   <span class="badge">{{ attribute(stats.STATS.1, 'temp' ~ i) }}</span>
                   Temp {{ i }}
                 </li>
               {% endfor %}
-
-                <li class="list-group-item">
-                  <span class="badge">{{ attribute(stats.STATS.1, 'temp_avg') }}</span>
-                  Average temperature
-                </li>
-                <li class="list-group-item">
-                  <span class="badge">{{ attribute(stats.STATS.1, 'temp_max') }}</span>
-                  Max temperature
-                </li>
               </ul>
             </div>
 
