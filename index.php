@@ -41,15 +41,9 @@ $loader = new \Twig_Loader_Filesystem('.');
 $twig = new \Twig_Environment($loader, array('autoescape' => false));
 
 $miners = Core::config('miners');
-$diff = file_get_contents('https://blockchain.info/q/getdifficulty');
 
 foreach($miners as $minerId => $minerData) {
   $summary = $api->command($minerId, 'summary');
-  $summary['SUMMARY'][0]['max_diff'] = bcadd((float)$diff,0,0);
-  $summary['SUMMARY'][0]['share_diff'] = bcdiv(bcmul($summary['SUMMARY'][0]['best_share'], 100, 0), $summary['SUMMARY'][0]['max_diff'], 0);
-  $summary['SUMMARY'][0]['best_share'] = number_format($summary['SUMMARY'][0]['best_share'], 0, ',', '.');
-  $summary['SUMMARY'][0]['max_diff'] = number_format($summary['SUMMARY'][0]['max_diff'], 0, ',', '.');
-
   if($summary === false) {
     $minerHtml[$minerId] = 'Unable to connect to '. $miners[$minerId];
     $messages[] = $minerHtml[$minerId];
@@ -57,6 +51,12 @@ foreach($miners as $minerId => $minerData) {
     $config = $api->command($minerId, 'config');
     $stats = $api->command($minerId, 'stats');
     $pools = $api->command($minerId, 'pools');
+    $coin = $api->command($minerId, 'coin');
+    $summary['SUMMARY'][0]['max_diff'] = bcadd($coin['COIN'][0]["Network Difficulty"],0,0);
+    $summary['SUMMARY'][0]['share_diff'] = bcdiv(bcmul($summary['SUMMARY'][0]['best_share'], 100, 0), $summary['SUMMARY'][0]['max_diff'], 0);
+    $summary['SUMMARY'][0]['best_share'] = number_format($summary['SUMMARY'][0]['best_share'], 0, ',', '.');
+    $summary['SUMMARY'][0]['max_diff'] = number_format($summary['SUMMARY'][0]['max_diff'], 0, ',', '.');
+
     $minerHtml[$minerId] = $twig->render('miner.twig', array(
       'summary' => $summary,
       'stats'   => $stats,
