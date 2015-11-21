@@ -7,7 +7,7 @@ $core = new Core;
 $api = new Api;
 
 $messages = array();
-
+# https://github.com/ckolivas/cgminer/blob/master/API-README
 if(isset($_POST['token']) && $token = $core->validCsrf($_POST['token'])) {
   switch($_POST['cmd']) {
     case 'switchpool':
@@ -54,12 +54,13 @@ foreach($miners as $minerId => $minerData) {
     $minerHtml[$minerId] = 'Unable to connect to '. $miners[$minerId];
     $messages[] = $minerHtml[$minerId];
   } else {
+    $config = $api->command($minerId, 'config');
     $stats = $api->command($minerId, 'stats');
     $pools = $api->command($minerId, 'pools');
-
     $minerHtml[$minerId] = $twig->render('miner.twig', array(
       'summary' => $summary,
       'stats'   => $stats,
+      'strategy'   => $config['CONFIG'][0]['Strategy'],
       'pools'   => $pools['POOLS'],
       'token'   => $token,
       'ID'      => $minerId,

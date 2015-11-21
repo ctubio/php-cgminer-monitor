@@ -5,7 +5,7 @@
           <h1>{{ attribute(summary.SUMMARY.0, 'GHS 5s') }} GHs / {{ attribute(summary.SUMMARY.0, 'GHS av') }} GHs <small>5 sec / average</small></h1>
 
 
-          <h3>Best Share <span class="label label-primary">{{ summary.SUMMARY.0.best_share }}</span> <small>Current Difficutly <span class="label label-primary">{{ summary.SUMMARY.0.max_diff }}</small></spanl></h3>
+          <h3>Best Share <span class="label label-primary">{{ summary.SUMMARY.0.best_share }}</span> <small>Network Difficutly <span class="label label-primary">{{ summary.SUMMARY.0.max_diff }}</small></spanl></h3>
           <div class="progress progress-striped">
           {% if summary.SUMMARY.0.share_diff > 50 %}
             <div class="progress-bar progress-bar-danger" role="progressbar" aria-valuenow="{{ summary.SUMMARY.0.share_diff }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ summary.SUMMARY.0.share_diff }}%">
@@ -36,22 +36,27 @@
           <table class="table table-striped table-condensed">
             <thead>
               <tr>
+                {% if strategy == 'Failover' %}
                 <th> </th>
+                {% endif %}
                 <th>URL</th>
-                <th>User</th>
+                <th>Account</th>
                 <th>Difficulty</th>
                 <th>Status</th>
                 <th>Getworks</th>
-                <th>Last share</th>
+                <th>LShare</th>
                 <th>Accepted</th>
                 <th>Rejected</th>
                 <th>Stale</th>
+                {% if strategy != 'Failover' %}
+                <th>Action</th>
+                {% endif %}
               </tr>
             </thead>
             <tbody>
             {% for pool in pools %}
               <tr>
-                <td>
+                {% if strategy == 'Failover' %}<td>{% if pool.Status == 'Alive' %}
                   <form role="form" class="pull-left" action="index.php" method="POST">
                     <input type="hidden" name="token" value="{{ token }}">
                     <input type="hidden" name="cmd" value="switchpool">
@@ -59,9 +64,9 @@
                     <input type="hidden" name="pool" value="{{ pool.POOL }}">
                     <button type="submit" class="btn btn-primary btn-xs"><span class="glyphicon glyphicon-cloud-upload" aria-hidden="true"></span></button>
                   </form>
-                </td>
-                <td>{{ pool.URL }}</td>
-                <td>{{ pool.User }}</td>
+                {% endif %}</td>{% endif %}
+                <td><small>{{ pool.URL }}</small></td>
+                <td><small>{{ pool.User }}</small></td>
                 <td>{{ pool.Diff }}</td>
                 <td>{{ pool.Status }}</td>
                 <td>{{ pool.Getworks }}</td>
@@ -69,7 +74,8 @@
                 <td>{{ pool.Accepted }}</td>
                 <td>{{ attribute(pool, 'Pool Rejected%') }}%</td>
                 <td>{{ attribute(pool, 'Pool Stale%') }}%</td>
-                <td>
+                {% if strategy != 'Failover' %}
+                <td>{% if pool.Status == 'Alive' %}
                   <form role="form" class="pull-left" action="index.php" method="POST">
                     <input type="hidden" name="token" value="{{ token }}">
                     <input type="hidden" name="cmd" value="enablepool">
@@ -93,7 +99,8 @@
                     <input type="hidden" name="pool" value="{{ pool.POOL }}">
                     <button type="submit" class="btn btn-danger btn-xs"><span class="glyphicon glyphicon glyphicon-trash" aria-hidden="true"></span></button>
                   </form>
-                </td>
+                {% endif %}</td>
+                {% endif %}
               </tr>
             {% endfor %}
             </tbody>
