@@ -1,9 +1,8 @@
 add titles to icons
 add auto refresh
 add pool switch by timeout
-avoid alert in manual refresh after submit form
 keep current tab after manual refresh
 mark active pool
-show/change pools strategy
+change pools strategy
 collapsible add pool form
 add hashrate charts
