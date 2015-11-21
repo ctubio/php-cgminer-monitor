@@ -51,6 +51,10 @@ foreach($miners as $minerId => $minerData) {
     $config = $api->command($minerId, 'config');
     $stats = $api->command($minerId, 'stats');
     $pools = $api->command($minerId, 'pools');
+    foreach($pools['POOLS'] as $k=>$v){
+      $pools['POOLS'][$k]['isWorking'] = $config['CONFIG'][0]['Strategy']=='Failover'
+        ? !$pools['POOLS'][$k]['Priority'] : $pools['POOLS'][$k]['Status']=='Alive';
+    }
     $coin = $api->command($minerId, 'coin');
     $summary['SUMMARY'][0]['max_diff'] = bcadd($coin['COIN'][0]["Network Difficulty"],0,0);
     $summary['SUMMARY'][0]['share_diff'] = bcdiv(bcmul($summary['SUMMARY'][0]['best_share'], 100, 0), $summary['SUMMARY'][0]['max_diff'], 0);
