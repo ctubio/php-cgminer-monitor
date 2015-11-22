@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>phpMyMiner</title>
+    <title>php-cgminer-monitor</title>
     <link href="css/bootstrap.min.css" rel="stylesheet">
   </head>
   <body>
@@ -28,10 +28,28 @@
     <script type="text/javascript">
     $(document).ready(function() {
         $('form').submit(function(event) {
+          var _self = $(this), data = _self.serializeArray();
+          if (_self.find('input[name="cmd"]').val()=='poolquota')
+            jQuery.each(data, function(i, _data) {
+              if (_data.name=='pool') {
+                jQuery.each(data, function(_i, __data) {if (_data==__data) delete data[_i];});
+                $('form.poolquota input[name="pool"]').each(function(){
+                  if ($(this).parents('form').find('input[name="tab"]').val()==_self.find('input[name="tab"]').val())
+                    data.push({name:_data.name+'[]',value:$(this).val()});
+                });
+              }
+              else if (_data.name=='quota') {
+                jQuery.each(data, function(_i, __data) {if (_data==__data) delete data[_i];});
+                $('form.poolquota input[name="quota"]').each(function(){
+                  if ($(this).parents('form').find('input[name="tab"]').val()==_self.find('input[name="tab"]').val())
+                  data.push({name:'quota[]',value:$(this).val()});
+                });
+              }
+            });
           $.ajax({
               type     : 'POST',
               url      : '/index.php',
-              data     : $(this).serialize(),
+              data     : data,
               encode   : true
           }).done(function(data) {$('.container').prepend(data);});
           event.preventDefault();

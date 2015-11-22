@@ -6,29 +6,32 @@ require 'vendor/autoload.php';
 $core = new Core;
 $api = new Api;
 
-$messages = array();
+$results = $messages = array();
 # https://github.com/ckolivas/cgminer/blob/master/API-README
 if(isset($_POST['token']) && $token = $core->validCsrf($_POST['token'])) {
   switch($_POST['cmd']) {
     case 'restart':
-      $result = $api->command($_POST['miner'], $_POST['cmd']);
+      $results[] = $api->command($_POST['miner'], $_POST['cmd']);
       break;
     case 'switchpool':
     case 'disablepool':
     case 'enablepool':
     case 'removepool':
-      $result = $api->command($_POST['miner'], $_POST['cmd'], $_POST['pool']);
+      $results[] = $api->command($_POST['miner'], $_POST['cmd'], $_POST['pool']);
       break;
     case 'addpool':
       $poolData = $_POST['url'].','.$_POST['username'].','.$_POST['password'];
-      $result = $api->command($_POST['miner'], 'addpool', $poolData);
+      $results[] = $api->command($_POST['miner'], 'addpool', $poolData);
       break;
     case 'poolquota':
-      $poolData = $_POST['pool'].','.$_POST['quota'];
-      $result = $api->command($_POST['miner'], 'poolquota', $poolData);
+      foreach($_POST['pool'] as $k=>$v) {
+        $poolData = $_POST['pool'][$k].','.$_POST['quota'][$k];
+        $results[] = $api->command($_POST['miner'], 'poolquota', $poolData);
+      }
       break;
   }
-  $messages[] = is_array($result['STATUS'])?$result['STATUS'][0]['Msg']:$result['STATUS'];
+  foreach($results as $result)
+    $messages[] = is_array($result['STATUS'])?$result['STATUS'][0]['Msg']:$result['STATUS'];
 }
 
 $loader = new \Twig_Loader_Filesystem('.');
@@ -39,7 +42,7 @@ if ($messages) die($twig->render('msg.twig', array(
   'tab'      => $_POST['tab'],
 )));
 
-$token = $token = $core->getCsrf();
+$token = $core->getCsrf();
 
 $miners = Core::config('miners');
 $tab = 0;

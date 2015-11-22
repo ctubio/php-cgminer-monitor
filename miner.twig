@@ -92,7 +92,7 @@
                 <td>{{ attribute(pool, 'Pool Stale%') }}%</td>
                 {% if strategy != 'Failover' %}
                 <td>
-                  <form class="form-inline" action="index.php" method="POST">
+                  <form class="form-inline poolquota" action="index.php" method="POST">
                     <div class="form-group form-group-sm">
                       <input type="text" name="quota" size="2" style="text-align:center;" value="{{ pool.Quota }}" class="form-control" placeholder="Quota">
                     </div>
