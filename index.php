@@ -30,8 +30,9 @@ if(isset($_POST['token']) && $token = $core->validCsrf($_POST['token'])) {
       }
       break;
   }
-  foreach($results as $result)
-    $messages[] = is_array($result['STATUS'])?$result['STATUS'][0]['Msg']:$result['STATUS'];
+  foreach($results as $_result)
+    foreach($_result as $result)
+      $messages[] = is_array($result['STATUS'])?$result['STATUS'][0]['Msg']:$result['STATUS'];
 }
 
 $loader = new \Twig_Loader_Filesystem('.');
@@ -39,17 +40,26 @@ $twig = new \Twig_Environment($loader, array('autoescape' => false));
 
 if ($messages) die($twig->render('msg.twig', array(
   'msgs'      => $messages,
+  'reset'      => isset($_POST['reset'])?$_POST['reset']:true,
   'tab'      => $_POST['tab'],
 )));
+
+unset($_POST);
 
 $token = $core->getCsrf();
 
 $miners = Core::config('miners');
+foreach($miners as $k=>&$miner)
+  $miner = array(
+    'id'=>$k,
+    'title'=>is_array($miner)?'<span class="glyphicon glyphicon-'.strtr(rand(1,3),array(1=>'fire',2=>'heart-empty',3=>'gift')).'"></span>':$miner,
+    'active'=>$k?NULL:'active'
+  );
 $tab = 0;
 foreach($miners as $minerId => $minerData) {
   $summary = $api->command($minerId, 'summary');
   if($summary === false) {
-    $minerHtml[$minerId] = '<p style="margin:10px;">Unable to connect to '. $miners[$minerId].'</p>';
+    $minerHtml[$minerId] = '<p style="margin:10px;">Unable to connect to '. $miners[$minerId]['title'].'</p>';
     $messages[] = $minerHtml[$minerId];
   } else {
     $config = $api->command($minerId, 'config');

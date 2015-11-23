@@ -32,23 +32,62 @@ class Api {
     }
 
     $miners = Core::config('miners');
+    $miner = $miners[$miner];
+    if (!is_array($miner)) $miner = array($miner);
+    $return = array();
+    foreach($miner as $_miner) {
+      list($ip, $port) = explode(':', $_miner);
+      $socket = $this->connect($ip, $port);
 
-    list($ip, $port) = explode(':', $miners[$miner]);
-    $socket = $this->connect($ip, $port);
+      if($socket === false) {
+        return false;
+      }
 
-    if($socket === false) {
-      return false;
+      socket_write($socket, json_encode($json), strlen(json_encode($json)));
+      $line = $this->read($socket);
+      socket_close($socket);
+
+      $line = str_replace('}{', '},{', $line);
+      $line = str_replace('"Best Share"', '"best_share"', $line);
+      $return[] = json_decode($line, true);
+      if (in_array($cmd, array('coin'))) break;
     }
-
-    socket_write($socket, json_encode($json), strlen(json_encode($json)));
-    $line = $this->read($socket);
-    socket_close($socket);
-
-    $line = str_replace('}{', '},{', $line);
-    $line = str_replace('"Best Share"', '"best_share"', $line);
-    $json = json_decode($line, true);
-
-    return $json;
+    if ($c=count($miner)>1)
+      switch($cmd) {
+        case 'pools':
+          $_return = $return[0];
+          foreach($_return['POOLS'] as $k=>$rp) {
+            foreach($return as $_r) {
+              if (!isset($_r['POOLS'][$k]) or $rp['URL']!=$_r['POOLS'][$k]['URL']) {
+                unset($_return['POOLS'][$k]);
+                break;
+              }
+            }
+          }
+          $return = array($_return);
+          break;
+        case 'stats':
+          $_return = $return[0];
+          foreach($return as $r) {
+            if ($r['STATS'][1]['temp_avg']>$_return['STATS'][1]['temp_avg'])
+              $_return['STATS'][1]['temp_avg'] = $r['STATS'][1]['temp_avg'];
+          }
+          $_return['united'] = true;
+          $return = array($_return);
+          break;
+        case 'summary':
+          $_return = $return[0];
+          $_return['SUMMARY'][0]['GHS 5s'] = $_return['SUMMARY'][0]['GHS av'] = 0;
+          foreach($return as $r) {
+            if ($r['SUMMARY'][0]['best_share']>$_return['SUMMARY'][0]['best_share'])
+              $_return['SUMMARY'][0]['best_share'] = $r['SUMMARY'][0]['best_share'];
+            $_return['SUMMARY'][0]['GHS 5s'] += $r['SUMMARY'][0]['GHS 5s'];
+            $_return['SUMMARY'][0]['GHS av'] += $r['SUMMARY'][0]['GHS av'];
+          }
+          $return = array($_return);
+          break;
+      }
+    return isset($_POST)?$return:$return[0];
   }
 
   private function read($socket) {

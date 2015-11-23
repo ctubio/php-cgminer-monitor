@@ -1,5 +1,5 @@
       <div class="panel panel-info">
-        <div class="panel-heading"><h3 class="panel-title">System overview - {{ stats.STATUS.0.Description }}<div style="float:right;">
+        <div class="panel-heading"><h3 class="panel-title">System overview - {{ stats.STATUS.0.Description }}{% if stats.united == false %}<div style="float:right;">
           <form role="form" class="pull-left" action="index.php" method="POST">
             <input type="hidden" name="token" value="{{ token }}">
             <input type="hidden" name="cmd" value="restart">
@@ -7,7 +7,7 @@
             <input type="hidden" name="tab" value="{{ tab }}">
             <button type="submit" class="btn btn-primary btn-xs"><span class="glyphicon glyphicon-off" aria-hidden="true"></span></button>
           </form>
-        </div></h3></div>
+        </div>{% endif %}</h3></div>
         <div class="panel-body">
 
           <h1>{{ attribute(summary.SUMMARY.0, 'GHS 5s') }} GHs / {{ attribute(summary.SUMMARY.0, 'GHS av') }} GHs <small>5 sec / average</small></h1>
@@ -26,12 +26,12 @@
           </div>
           <h3>Average temperature <span class="label label-primary">{{ stats.STATS.1.temp_avg }}</span></h3>
           <div class="progress progress-striped">
-          {% if stats.STATS.1.temp_avg > 50 %}
-            <div class="progress-bar progress-bar-danger" role="progressbar" aria-valuenow="{{ stats.STATS.1.temp_avg }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ stats.STATS.1.temp_avg }}%">
-          {% elseif stats.STATS.1.temp_avg > 40 %}
-            <div class="progress-bar progress-bar-warning" role="progressbar" aria-valuenow="{{ stats.STATS.1.temp_avg }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ stats.STATS.1.temp_avg }}%">
+          {% if stats.STATS.1.temp_avg > 70 %}
+            <div class="progress-bar progress-bar-danger" role="progressbar" aria-valuenow="{{ stats.STATS.1.temp_avg }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ stats.STATS.1.temp_avg * 100 / 80 }}%">
+          {% elseif stats.STATS.1.temp_avg > 60 %}
+            <div class="progress-bar progress-bar-warning" role="progressbar" aria-valuenow="{{ stats.STATS.1.temp_avg }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ stats.STATS.1.temp_avg * 100 / 80 }}%">
           {% else %}
-            <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="{{ stats.STATS.1.temp_avg }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ stats.STATS.1.temp_avg }}%">
+            <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="{{ stats.STATS.1.temp_avg }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ stats.STATS.1.temp_avg * 100 / 80 }}%">
           {% endif %}
             </div>
           </div>
@@ -39,7 +39,7 @@
       </div>
 
       <div class="panel panel-info">
-        <div class="panel-heading"><h3 class="panel-title">{{ strategy }} Pools<a onclick="javascript:jQuery('.addpooldiv').toggle();return false;" style="cursor:pointer;float:right;font-weight:600;font-size:120%;">+</a></h3></div>
+        <div class="panel-heading"><h3 class="panel-title">{{ strategy }} Pools{% if stats.united == false %}<a onclick="javascript:jQuery('.addpooldiv').toggle();return false;" style="cursor:pointer;float:right;font-weight:600;font-size:120%;">+</a>{% endif %}</h3></div>
         <div class="panel-body">
       <div class="addpooldiv" style="text-align:center;display:none;margin-bottom:11px;">
           <form class="form-inline" action="index.php" method="POST">
@@ -65,8 +65,11 @@
           <table class="table table-striped table-condensed">
             <thead>
               <tr>
+                <th>Status</th>
                 <th>URL</th>
+                {% if stats.united == false %}
                 <th>Account</th>
+                {% endif %}
                 <th>Difficulty</th>
                 <th>Getworks</th>
                 <th>LShare</th>
@@ -76,35 +79,13 @@
                 {% if strategy != 'Failover' %}
                 <th>Quota</th>
                 {% endif %}
-                <th>Action</th>
               </tr>
             </thead>
             <tbody>
             {% for pool in pools %}
               <tr {% if pool.Status == 'Dead' %}style="color:gray;" {% elseif pool.isWorking %}style="color:yellow;" {% endif %}>
-                <td><small>{{ pool.URL }}</small></td>
-                <td><small>{{ pool.User }}</small></td>
-                <td>{{ pool.Diff }}</td>
-                <td>{{ pool.Getworks }}</td>
-                <td>{{ attribute(pool, 'Last Share Time') }}</td>
-                <td>{{ pool.Accepted }}</td>
-                <td>{{ attribute(pool, 'Pool Rejected%') }}%</td>
-                <td>{{ attribute(pool, 'Pool Stale%') }}%</td>
-                {% if strategy != 'Failover' %}
                 <td>
-                  <form class="form-inline poolquota" action="index.php" method="POST">
-                    <div class="form-group form-group-sm">
-                      <input type="text" name="quota" size="2" style="text-align:center;" value="{{ pool.Quota }}" class="form-control" placeholder="Quota">
-                    </div>
-                    <input type="hidden" name="token" value="{{ token }}">
-                    <input type="hidden" name="miner" value="{{ ID }}">
-                    <input type="hidden" name="pool" value="{{ pool.POOL }}">
-                    <input type="hidden" name="tab" value="{{ tab }}">
-                    <input type="hidden" name="cmd" value="poolquota">
-                  </form>
-                </td>
-                {% endif %}
-                <td>{% if pool.Status != 'Dead' %}
+                {% if pool.Status != 'Dead' %}
                 {% if strategy == 'Failover' %}
                   {% if pool.isWorking == false %}
                   <form role="form" class="pull-left" action="index.php" method="POST">
@@ -147,13 +128,37 @@
                     <button type="submit" class="btn btn-danger btn-xs"><span class="glyphicon glyphicon glyphicon-trash" aria-hidden="true"></span></button>
                   </form-->
                 {% endif %}{% else %}Dead{% endif %}</td>
+                <td><small>{{ pool.URL }}</small></td>
+                {% if stats.united == false %}
+                <td><small>{{ pool.User }}</small></td>
+                {% endif %}
+                <td>{{ pool.Diff }}</td>
+                <td>{{ pool.Getworks }}</td>
+                <td>{{ attribute(pool, 'Last Share Time') }}</td>
+                <td>{{ pool.Accepted }}</td>
+                <td>{{ attribute(pool, 'Pool Rejected%') }}%</td>
+                <td>{{ attribute(pool, 'Pool Stale%') }}%</td>
+                {% if strategy != 'Failover' %}
+                <td>
+                  <form class="form-inline poolquota" action="index.php" method="POST">
+                    <div class="form-group form-group-sm">
+                      <input type="text" name="quota" size="2" style="text-align:center;" value="{{ pool.Quota }}" class="form-control" placeholder="Quota">
+                    </div>
+                    <input type="hidden" name="token" value="{{ token }}">
+                    <input type="hidden" name="miner" value="{{ ID }}">
+                    <input type="hidden" name="pool" value="{{ pool.POOL }}">
+                    <input type="hidden" name="tab" value="{{ tab }}">
+                    <input type="hidden" name="cmd" value="poolquota">
+                  </form>
+                </td>
+                {% endif %}
               </tr>
             {% endfor %}
             </tbody>
           </table>
         </div>
       </div>
-
+      {% if stats.united == false %}
       <div class="panel panel-info">
         <div class="panel-heading"><h3 class="panel-title">Hardware</h3></div>
         <div class="panel-body">
@@ -214,3 +219,4 @@
           </div>
         </div>
       </div>
+      {% endif %}

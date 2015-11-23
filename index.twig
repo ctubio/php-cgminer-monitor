@@ -12,13 +12,13 @@
     <div class="container">
       <div role="tabpanel">
         <ul class="nav nav-tabs" role="tablist">
-          {% for i in range(0, miners|length -1) %}
-          <li role="presentation" class="{{ i == 0 ? 'active' : '' }}"><a href="#miner{{ i }}" aria-controls="miner{{ i }}" role="tab" data-toggle="tab">{{ miners[i] }}</a></li>
+          {% for miner in miners %}
+          <li role="presentation" class="{{ miner['active'] }}"><a href="#miner{{ miner['id'] }}" aria-controls="miner{{ miner['id'] }}" role="tab" data-toggle="tab">{{ miner['title'] }}</a></li>
           {% endfor %}
         </ul>
         <div class="tab-content">
-          {% for i in range(0, miners|length -1) %}
-          <div role="tabpanel" class="tab-pane {{ i == 0 ? 'active' : '' }}" id="miner{{ i }}">{{ minerHtml[i] }}</div>
+          {% for miner in miners %}
+          <div role="tabpanel" class="tab-pane {{ miner['active'] }}" id="miner{{ miner['id'] }}">{{ minerHtml[miner['id']] }}</div>
           {% endfor %}
         </div>
       </div>
