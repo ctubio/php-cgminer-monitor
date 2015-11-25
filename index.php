@@ -8,7 +8,7 @@ $api = new Api;
 
 $results = $messages = array();
 # https://github.com/ckolivas/cgminer/blob/master/API-README
-if(isset($_POST['token']) && $token = $core->validCsrf($_POST['token'])) {
+if(isset($_POST['cmd'])) {
   switch($_POST['cmd']) {
     case 'restart':
       $results[] = $api->command($_POST['miner'], $_POST['cmd']);
@@ -46,8 +46,6 @@ if ($messages) die($twig->render('msg.twig', array(
 
 unset($_POST);
 
-$token = $core->getCsrf();
-
 $miners = Core::config('miners');
 foreach($miners as $k=>&$miner)
   $miner = array(
@@ -80,7 +78,6 @@ foreach($miners as $minerId => $minerData) {
       'stats'   => $stats,
       'strategy'   => $config['CONFIG'][0]['Strategy'],
       'pools'   => $pools['POOLS'],
-      'token'   => $token,
       'tab'   => $tab,
       'ID'      => $minerId,
     ));
@@ -91,7 +88,6 @@ foreach($miners as $minerId => $minerData) {
 echo $twig->render('index.twig', array(
   'miners'    => $miners,
   'minerHtml' => $minerHtml,
-  'token'     => $token,
   'msgs'      => $messages,
   'tab'      => isset($_GET['tab'])?$_GET['tab']:0,
 ));

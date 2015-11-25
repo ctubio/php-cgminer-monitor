@@ -1,5 +1,4 @@
 add auto refresh
-add pool switch by timeout
 change pools strategy (seems like noway)
 start after restart (ssh?)
 add hashrate charts

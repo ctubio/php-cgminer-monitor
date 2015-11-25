@@ -26,37 +26,75 @@
     <script src="js/jquery.js"></script>
     <script src="js/bootstrap.min.js"></script>
     <script type="text/javascript">
+    var moveQuota = function(miner, pool) {
+      var next = 0;
+      $('form.poolquota-'+miner).each(function(){
+        if ($(this).hasClass('poolquota-'+miner+'-'+pool) || parseInt($(this).find('input[name="quota"]').val(), 10)==0) return;
+        $(this).find('input[name="quota"]').val(parseInt($(this).find('input[name="quota"]').val(),10)-1);
+        $('form.poolquota-'+miner+'-'+pool).find('input[name="quota"]').val(parseInt($('form.poolquota-'+miner+'-'+pool).find('input[name="quota"]').val(),10)+1);
+        $('form.poolquota-'+miner+'-'+pool).find('input[name="reset"]').val(0);
+        $('form.poolquota-'+miner+'-'+pool).submit();
+        $('form.poolquota-'+miner+'-'+pool).find('input[name="reset"]').val(1);
+        next++;
+      });
+      return next;
+    };
+
+    var moveQuota20 = function(miner, pool) {
+      setTimeout(function(){
+        var quotaInterval20 = setInterval(function(){
+          if (!moveQuota(miner, pool)) clearInterval(quotaInterval20);
+        },1200000);
+      },parseInt(prompt('Start in how many minutes?'),10)*60000);
+    };
+
+    var moveQuota5 = function(miner, pool) {
+      setTimeout(function(){
+        var quotaInterval5 = setInterval(function(){
+          if (!moveQuota(miner, pool)) clearInterval(quotaInterval5);
+        },300000);
+      },parseInt(prompt('Start in how many minutes?'),10)*60000);
+    };
+
+    var moveQuota1 = function(miner, pool) {
+      setTimeout(function(){
+        var quotaInterval1 = setInterval(function(){
+          if (!moveQuota(miner, pool)) clearInterval(quotaInterval1);
+        },60000);
+      },parseInt(prompt('Start in how many minutes?'),10)*60000);
+    };
+
     $(document).ready(function() {
-        $('form').submit(function(event) {
-          var _self = $(this), data = _self.serializeArray();
-          if (_self.find('input[name="cmd"]').val()=='poolquota')
-            jQuery.each(data, function(i, _data) {
-              if (_data.name=='pool') {
-                jQuery.each(data, function(_i, __data) {if (_data==__data) delete data[_i];});
-                $('form.poolquota input[name="pool"]').each(function(){
-                  if ($(this).parents('form').find('input[name="tab"]').val()==_self.find('input[name="tab"]').val())
-                    data.push({name:_data.name+'[]',value:$(this).val()});
-                });
-              }
-              else if (_data.name=='quota') {
-                jQuery.each(data, function(_i, __data) {if (_data==__data) delete data[_i];});
-                $('form.poolquota input[name="quota"]').each(function(){
-                  if ($(this).parents('form').find('input[name="tab"]').val()==_self.find('input[name="tab"]').val())
-                  data.push({name:'quota[]',value:$(this).val()});
-                });
-              }
-            });
-          $.ajax({
-              type     : 'POST',
-              url      : '/index.php',
-              data     : data,
-              encode   : true
-          }).done(function(data) {$('.container').prepend(data);});
-          event.preventDefault();
-        });
-        {% if tab > 0 %}
-          $('.nav li').eq({{tab}}).find('a').click();
-        {% endif %}
+      $('form').submit(function(event) {
+        var _self = $(this), data = _self.serializeArray();
+        if (_self.find('input[name="cmd"]').val()=='poolquota')
+          jQuery.each(data, function(i, _data) {
+            if (_data.name=='pool') {
+              jQuery.each(data, function(_i, __data) {if (_data==__data) delete data[_i];});
+              $('form.poolquota input[name="pool"]').each(function(){
+                if ($(this).parents('form').find('input[name="tab"]').val()==_self.find('input[name="tab"]').val())
+                  data.push({name:_data.name+'[]',value:$(this).val()});
+              });
+            }
+            else if (_data.name=='quota') {
+              jQuery.each(data, function(_i, __data) {if (_data==__data) delete data[_i];});
+              $('form.poolquota input[name="quota"]').each(function(){
+                if ($(this).parents('form').find('input[name="tab"]').val()==_self.find('input[name="tab"]').val())
+                data.push({name:'quota[]',value:$(this).val()});
+              });
+            }
+          });
+        $.ajax({
+            type     : 'POST',
+            url      : '/index.php',
+            data     : data,
+            encode   : true
+        }).done(function(data) {$('.alert').remove();$('.container').prepend(data);});
+        event.preventDefault();
+      });
+      {% if tab > 0 %}
+        $('.nav li').eq({{tab}}).find('a').click();
+      {% endif %}
     });
   </script>
   </body>
