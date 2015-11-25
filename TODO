@@ -1,4 +1,5 @@
 add auto refresh
+add visual timer for quota switcher
 change pools strategy (seems like noway)
 start after restart (ssh?)
 add hashrate charts
