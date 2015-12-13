@@ -38,7 +38,7 @@
       </div>
 
       <div class="panel panel-info">
-        <div class="panel-heading"><h3 class="panel-title">{{ strategy }} Pools{% if stats.united == false %}<a onclick="javascript:jQuery('.addpooldiv').toggle();return false;" style="cursor:pointer;float:right;font-weight:600;font-size:120%;" title="Add">+</a>{% endif %}</h3></div>
+        <div class="panel-heading"><h3 class="panel-title">{{ strategy }} Pools{% if stats.united == false %}<a onclick="javascript:jQuery('.addpooldiv').toggle();return false;" style="cursor:pointer;float:right;font-weight:600;font-size:120%;" title="Add">+</a>{% else %}<span style="float:right;">Auto Switch Pools <input type="checkbox" class="slush_auto" checked="checked" style="vertical-align: text-top;" /></span>{% endif %}</h3></div>
         <div class="panel-body">
       <div class="addpooldiv" style="text-align:center;display:none;margin-bottom:11px;">
           <form class="form-inline" action="index.php" method="POST">
@@ -85,17 +85,14 @@
                 <td>
                 {% if pool.Status != 'Dead' %}
                 {% if strategy == 'Failover' %}
-                  {% if pool.isWorking == false %}
-                  <form role="form" class="pull-left" action="index.php" method="POST">
+                  <form role="form" class="pull-left switchpool switchpool-{{ ID }} switchpool-{{ ID }}-{{ pool.POOL }}" action="index.php" method="POST">
                     <input type="hidden" name="cmd" value="switchpool">
                     <input type="hidden" name="miner" value="{{ ID }}">
+                    <input type="hidden" name="reset" value="1">
                     <input type="hidden" name="pool" value="{{ pool.POOL }}">
                     <input type="hidden" name="tab" value="{{ tab }}">
                     <button type="submit" class="btn btn-primary btn-xs"><span class="glyphicon glyphicon-play" aria-hidden="true" title="Enable"></span></button>
                   </form>
-                  {% else %}
-                  Enabled
-                  {% endif %}
                   {% else %}
                   {% if pool.isWorking == false %}
                   <form role="form" class="pull-left" action="index.php" method="POST">
@@ -224,7 +221,7 @@
             <div class="col-md-4">
               <ul class="list-group">
                 <li class="list-group-item">
-                  <a target="_blank" href="https://mining.bitcoin.cz/dashboard/">Slush</a>
+                  <a target="_blank" href="https://mining.bitcoin.cz/dashboard/">slush</a>
                 </li>
                 <li class="list-group-item">
                   <span class="badge slush_hash"></span>
@@ -251,7 +248,7 @@
             <div class="col-md-4">
               <ul class="list-group">
                 <li class="list-group-item">
-                  <a target="_blank" href="http://solo.ckpool.org/users/1CArLeSkmBT1BkkcADtNrHoLSgHVhBcesk">Solo ckpool</a>
+                  <a target="_blank" href="http://solo.ckpool.org/users/1CArLeSkmBT1BkkcADtNrHoLSgHVhBcesk">solo ckpool</a>
                 </li>
                 <li class="list-group-item">
                   <span class="badge solo_hash"></span>
@@ -272,6 +269,28 @@
                 <li class="list-group-item">
                   <span class="badge solo_workers"></span>
                   Workers
+                </li>
+              </ul>
+            </div>
+            <div class="col-md-4">
+              <ul class="list-group">
+                <li class="list-group-item">
+                  <a target="_blank" href="https://www.antpool.com/user/dashboard.htm">antpool</a>
+                </li>
+                <li class="list-group-item">
+                  <a target="_blank" href="https://kano.is/index.php?k=blocks">ckpool</a>
+                </li>
+                <li class="list-group-item">
+                  <a target="_blank" href="http://67.205.57.163/">67.205.57.163</a>
+                </li>
+                <li class="list-group-item">
+                  <a target="_blank" href="https://www.f2pool.com/user/worker">f2pool</a>
+                </li>
+                <li class="list-group-item">
+                  <a target="_blank" href="https://www.nicehash.com/index.jsp?p=miners&a=1&addr=1DiS2bVRR35jwxmbSMmtqkobRmTiD9Tevv&l=0">nicehash</a>
+                </li>
+                <li class="list-group-item">
+                  <a target="_blank" href="https://www.miningrigrentals.com">miningrigrentals</a>
                 </li>
               </ul>
             </div>
