@@ -95,6 +95,24 @@
       {% if tab > 0 %}
         $('.nav li').eq({{tab}}).find('a').click();
       {% endif %}
+      var getRemoteData = function() {
+        $.getJSON("https://mining.bitcoin.cz/stats/json", function(data) {
+          $(".slush_round_duration").html(data.round_duration);
+          $(".slush_luck_1").html(data.luck_1+'%');
+          $(".slush_luck_7").html(data.luck_7+'%');
+          $(".slush_luck_30").html(data.luck_30+'%');
+          $(".slush_hash").html((data.ghashes_ps/1000000).toFixed(2)+' PH/s');
+        });
+        $.getJSON("http://cors.io/?u=http://solo.ckpool.org/users/1CArLeSkmBT1BkkcADtNrHoLSgHVhBcesk", function(data) {
+          $(".solo_hash").html(data.hashrate1m);
+          $(".solo_workers").html(data.workers);
+          $(".solo_share").html((data.shares+'').replace(/(\d)(?=(\d{3})+(?:\.\d+)?$)/g, "$1."));
+          $(".solo_best").html((data.bestshare.toFixed(0)+'').replace(/(\d)(?=(\d{3})+(?:\.\d+)?$)/g, "$1."));
+          $(".solo_ever").html((data.bestever+'').replace(/(\d)(?=(\d{3})+(?:\.\d+)?$)/g, "$1."));
+        });
+      };
+      setInterval(function(){getRemoteData();},141000);
+      getRemoteData();
     });
   </script>
   </body>

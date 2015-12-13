@@ -50,6 +50,7 @@ $miners = Core::config('miners');
 foreach($miners as $k=>&$miner)
   $miner = array(
     'id'=>$k,
+    'united'=>is_array($miner),
     'title'=>is_array($miner)?'<span class="glyphicon glyphicon-'.strtr(rand(1,3),array(1=>'fire',2=>'heart-empty',3=>'gift')).'"></span>':$miner,
     'active'=>$k?NULL:'active'
   );
@@ -80,6 +81,7 @@ foreach($miners as $minerId => $minerData) {
       'pools'   => $pools['POOLS'],
       'tab'   => $tab,
       'ID'      => $minerId,
+      'URL'=>!$miners[$minerId]['united']?'http://'.substr($miners[$minerId]['title'],0,strpos($miners[$minerId]['title'],':')+1).'/cgi-bin/minerStatus.cgi':NULL,
     ));
   }
   $tab++;

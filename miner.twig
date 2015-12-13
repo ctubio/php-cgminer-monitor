@@ -1,12 +1,12 @@
       <div class="panel panel-info">
-        <div class="panel-heading"><h3 class="panel-title">System overview - {{ stats.STATUS.0.Description }}{% if stats.united == false %}<div style="float:right;">
+        <div class="panel-heading"><h3 class="panel-title">{% if stats.united == false %}<a href="{{ URL }}" target="_blank">Miner {{ stats.STATUS.0.Description }}</a><div style="float:right;">
           <form role="form" class="pull-left" action="index.php" method="POST">
             <input type="hidden" name="cmd" value="restart">
             <input type="hidden" name="miner" value="{{ ID }}">
             <input type="hidden" name="tab" value="{{ tab }}">
             <button type="submit" class="btn btn-primary btn-xs"><span class="glyphicon glyphicon-off" aria-hidden="true" title="Restart"></span></button>
           </form>
-        </div>{% endif %}</h3></div>
+        </div>{% else %}United Miners{% endif %}</h3></div>
         <div class="panel-body">
 
           <h1>{{ attribute(summary.SUMMARY.0, 'GHS 5s') }} GHs / {{ attribute(summary.SUMMARY.0, 'GHS av') }} GHs <small>5 sec / average</small></h1>
@@ -213,6 +213,68 @@
               </ul>
             </div>
 
+          </div>
+        </div>
+      </div>
+      {% else %}
+      <div class="panel panel-info">
+        <div class="panel-heading"><h3 class="panel-title">Remote Data</h3></div>
+        <div class="panel-body">
+          <div class="row">
+            <div class="col-md-4">
+              <ul class="list-group">
+                <li class="list-group-item">
+                  <a target="_blank" href="https://mining.bitcoin.cz/dashboard/">Slush</a>
+                </li>
+                <li class="list-group-item">
+                  <span class="badge slush_hash"></span>
+                  Hashrate
+                </li>
+                <li class="list-group-item">
+                  <span class="badge slush_round_duration"></span>
+                  Round Duration
+                </li>
+                <li class="list-group-item">
+                  <span class="badge slush_luck_1"></span>
+                  1 Day Luck
+                </li>
+                <li class="list-group-item">
+                  <span class="badge slush_luck_7"></span>
+                  7 Day Luck
+                </li>
+                <li class="list-group-item">
+                  <span class="badge slush_luck_30"></span>
+                  30 Day Luck
+                </li>
+              </ul>
+            </div>
+            <div class="col-md-4">
+              <ul class="list-group">
+                <li class="list-group-item">
+                  <a target="_blank" href="http://solo.ckpool.org/users/1CArLeSkmBT1BkkcADtNrHoLSgHVhBcesk">Solo ckpool</a>
+                </li>
+                <li class="list-group-item">
+                  <span class="badge solo_hash"></span>
+                  Hashrate 1m
+                </li>
+                <li class="list-group-item">
+                  <span class="badge solo_share"></span>
+                  Shares
+                </li>
+                <li class="list-group-item">
+                  <span class="badge solo_best"></span>
+                  Best share
+                </li>
+                <li class="list-group-item">
+                  <span class="badge solo_ever"></span>
+                  Best ever
+                </li>
+                <li class="list-group-item">
+                  <span class="badge solo_workers"></span>
+                  Workers
+                </li>
+              </ul>
+            </div>
           </div>
         </div>
       </div>
