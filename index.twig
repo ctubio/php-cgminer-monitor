@@ -135,6 +135,15 @@
           $(".solo_best").html((data.bestshare.toFixed(0)+'').replace(/(\d)(?=(\d{3})+(?:\.\d+)?$)/g, "$1."));
           $(".solo_ever").html((data.bestever+'').replace(/(\d)(?=(\d{3})+(?:\.\d+)?$)/g, "$1."));
         });
+        $.ajax({
+          url: 'http://cors.io/?u=https://api.coinbase.com/v1/prices/spot_rate?currency=EUR',
+          type: 'GET',
+          dataType: 'json',
+          success: function (data) {
+            if (!data || !data.amount) return;
+            $('.coinbase-price').html(data.amount+' €');
+          }
+        });
       };
       setInterval(function(){getRemoteData();},141000);
       getRemoteData();
