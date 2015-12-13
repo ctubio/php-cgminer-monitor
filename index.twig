@@ -96,6 +96,7 @@
         $('.nav li').eq({{tab}}).find('a').click();
       {% endif %}
       var _slush_state = -2;
+      var _old_slush_state = false;
       var getRemoteData = function() {
         $.getJSON("https://mining.bitcoin.cz/stats/json", function(data) {
           $(".slush_round_duration").html(data.round_duration);
@@ -107,9 +108,16 @@
           slush_sec = (+slush_sec[0]) * 60 * 60 + (+slush_sec[1]) * 60 + (+slush_sec[2]);
           var slush_state = 0;
           if (slush_sec<60*21) slush_state = -1;
-          else if (slush_sec>60*60*10) slush_state = 1;
+          if (slush_sec>60*60*2.5) slush_state = 1;
+          if (slush_sec>60*60*10) slush_state = 2;
           if (_slush_state!=-2 && $('.slush_auto').prop('checked') && slush_state!=_slush_state) {
             if (slush_state==1) {
+              _old_slush_state = true;
+              $('form.switchpool-1-3').find('input[name="reset"]').val(0);
+              $('form.switchpool-1-3').submit();
+              $('form.switchpool-1-3').find('input[name="reset"]').val(1);
+            } else if (slush_state==2) {
+              _old_slush_state = true;
               $('form.switchpool-0-3').find('input[name="reset"]').val(0);
               $('form.switchpool-0-3').submit();
               $('form.switchpool-0-3').find('input[name="reset"]').val(1);
@@ -117,10 +125,11 @@
               $('form.switchpool-1-1').find('input[name="reset"]').val(0);
               $('form.switchpool-1-1').submit();
               $('form.switchpool-1-1').find('input[name="reset"]').val(1);
-            } else if (slush_state==0) {
-              $('form.switchpool-2-2').find('input[name="reset"]').val(0);
-              $('form.switchpool-2-2').submit();
-              $('form.switchpool-2-2').find('input[name="reset"]').val(1);
+            } else if (slush_state==0 && _old_slush_state) {
+              _old_slush_state = false;
+              $('form.switchpool-2-1').find('input[name="reset"]').val(0);
+              $('form.switchpool-2-1').submit();
+              $('form.switchpool-2-1').find('input[name="reset"]').val(1);
               $('form.switchpool-3-1').find('input[name="reset"]').val(0);
               $('form.switchpool-3-1').submit();
               $('form.switchpool-3-1').find('input[name="reset"]').val(1);
