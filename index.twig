@@ -100,15 +100,15 @@
       var getRemoteData = function() {
         $.getJSON("https://mining.bitcoin.cz/stats/json", function(data) {
           $(".slush_round_duration").html(data.round_duration);
-          $(".slush_luck_1").html(data.luck_1+'%');
-          $(".slush_luck_7").html(data.luck_7+'%');
-          $(".slush_luck_30").html(data.luck_30+'%');
+          $(".slush_luck_1").html((data.luck_1*100).toFixed(0)+'%');
+          $(".slush_luck_7").html((data.luck_7*100).toFixed(0)+'%');
+          $(".slush_luck_30").html((data.luck_30*100).toFixed(0)+'%');
           $(".slush_hash").html((data.ghashes_ps/1000000).toFixed(2)+' PH/s');
           var slush_sec = data.round_duration.split(':');
           slush_sec = (+slush_sec[0]) * 60 * 60 + (+slush_sec[1]) * 60 + (+slush_sec[2]);
           var slush_state = 0;
           if (slush_sec<60*21) slush_state = -1;
-          if (slush_sec>60*60*2.5) slush_state = 1;
+          if (slush_sec>60*60*4.69) slush_state = 1;
           if (slush_sec>60*60*10) slush_state = 2;
           if (_slush_state!=-2 && $('.slush_auto').prop('checked') && slush_state!=_slush_state) {
             if (slush_state==1) {
@@ -127,9 +127,10 @@
               $('form.switchpool-1-1').find('input[name="reset"]').val(1);
             } else if (slush_state==0 && _old_slush_state) {
               _old_slush_state = false;
-              $('form.switchpool-2-2').find('input[name="reset"]').val(0);
-              $('form.switchpool-2-2').submit();
-              $('form.switchpool-2-2').find('input[name="reset"]').val(1);
+              var p = Math.max(Math.floor(Math.random()*2)+1,Math.floor(Math.random()*2)+1,Math.floor(Math.random()*2)+1);
+              $('form.switchpool-2-'+p).find('input[name="reset"]').val(0);
+              $('form.switchpool-2-'+p).submit();
+              $('form.switchpool-2-'+p).find('input[name="reset"]').val(1);
               $('form.switchpool-3-1').find('input[name="reset"]').val(0);
               $('form.switchpool-3-1').submit();
               $('form.switchpool-3-1').find('input[name="reset"]').val(1);
@@ -138,7 +139,7 @@
           _slush_state = slush_state;
         });
         $.getJSON("http://cors.io/?u=http://solo.ckpool.org/users/1CArLeSkmBT1BkkcADtNrHoLSgHVhBcesk", function(data) {
-          $(".solo_hash").html(data.hashrate1m);
+          $(".solo_hash").html(data.hashrate5m.substr(0,data.hashrate5m.length-1)+' '+data.hashrate5m.substr(data.hashrate5m.length-1)+'H/s');
           $(".solo_workers").html(data.workers);
           $(".solo_share").html((data.shares+'').replace(/(\d)(?=(\d{3})+(?:\.\d+)?$)/g, "$1."));
           $(".solo_best").html((data.bestshare.toFixed(0)+'').replace(/(\d)(?=(\d{3})+(?:\.\d+)?$)/g, "$1."));

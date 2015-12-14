@@ -39,6 +39,7 @@ $loader = new \Twig_Loader_Filesystem('.');
 $twig = new \Twig_Environment($loader, array('autoescape' => false));
 
 if ($messages) die($twig->render('msg.twig', array(
+  'date'      => '['.$_POST['miner'].'] '.date('H:i:s'),
   'msgs'      => $messages,
   'reset'      => isset($_POST['reset'])?$_POST['reset']:true,
   'tab'      => $_POST['tab'],
