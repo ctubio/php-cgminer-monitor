@@ -38,7 +38,12 @@
       </div>
 
       <div class="panel panel-info">
-        <div class="panel-heading"><h3 class="panel-title">{{ strategy }} Pools{% if stats.united == false %}<a onclick="javascript:jQuery('.addpooldiv').toggle();return false;" style="cursor:pointer;float:right;font-weight:600;font-size:120%;" title="Add">+</a>{% else %}<span style="float:right;">Auto Switch Pools <input type="checkbox" class="slush_auto" checked="checked" style="vertical-align: text-top;" /></span>{% endif %}</h3></div>
+        <div class="panel-heading"><h3 class="panel-title">{{ strategy }} Pools
+        {% if stats.united == false %}
+        <a onclick="javascript:jQuery('.addpooldiv').toggle();return false;" style="cursor:pointer;float:right;font-weight:600;font-size:120%;" title="Add">+</a>
+        {% else %}
+        <span style="float:right;">Auto Switch Pools <input _checked="checked" type="checkbox" class="slush_auto" style="vertical-align: text-top;" /></span>
+        {% endif %}</h3></div>
         <div class="panel-body">
       <div class="addpooldiv" style="text-align:center;display:none;margin-bottom:11px;">
           <form class="form-inline" action="index.php" method="POST">

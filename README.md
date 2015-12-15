@@ -30,7 +30,9 @@ System requirements
 Screenshot
 ----------
 For example here is the first tab that is the main interface to control all miners together (please, make use of the secondary tabs to control each miner independently):
-![solarized palette](https://github.com/ctubio/php-cgminer-monitor/raw/master/screenshotpng.png)
+![solarized palette](https://github.com/ctubio/php-cgminer-monitor/raw/master/screenshot.png)
+
+(yUUUp! a block was found there :kissing_heart:)
 
 License
 -------
